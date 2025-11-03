@@ -8,35 +8,30 @@ export const LOTTO_INFO = Object.freeze({
   TOTAL_LENGTH: 6,
 });
 
-export const LOTTO_RANK = Object.freeze([
-  Object.freeze({
-    rank: 1,
+export const LOTTO_RANK = Object.freeze({
+  '1st': Object.freeze({
     matchCount: 6,
-    money: '2,000,000,000',
+    money: 2000000000,
     requireBonus: false,
   }),
-  Object.freeze({
-    rank: 2,
+  '2nd': Object.freeze({
     matchCount: 5,
-    money: '30,000,000',
+    money: 30000000,
     requireBonus: true,
   }),
-  Object.freeze({
-    rank: 3,
+  '3rd': Object.freeze({
     matchCount: 5,
-    money: '1,500,000',
+    money: 1500000,
     requireBonus: false,
   }),
-  Object.freeze({
-    rank: 4,
+  '4th': Object.freeze({
     matchCount: 4,
-    money: '50,000',
+    money: 50000,
     requireBonus: false,
   }),
-  Object.freeze({
-    rank: 5,
+  '5th': Object.freeze({
     matchCount: 3,
-    money: '5,000',
+    money: 5000,
     requireBonus: false,
   }),
-]);
+});
