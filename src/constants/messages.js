@@ -16,7 +16,7 @@ export const OUTPUT_MESSAGE = Object.freeze({
   WINNING_MATCH_COUNT_INFO: (matchCnt) => `${matchCnt}개 일치`,
   WINNING_PRIZE_MONEY: (prizeMoney) => `(${prizeMoney}원)`,
   WINNING_COUNT: (winningCnt) => `${winningCnt}개`,
-  RATE_OF_RETURN: (rate) => `총 수익률은 ${rate}%입니다.`,
+  PROFIT_RATE: (rate) => `총 수익률은 ${rate}%입니다.`,
 });
 
 export const ERROR_MESSAGE = Object.freeze({
