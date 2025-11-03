@@ -1,12 +1,11 @@
-import App from "../src/App.js";
-import { MissionUtils } from "@woowacourse/mission-utils";
+import App from '../src/App.js';
+import { MissionUtils } from '@woowacourse/mission-utils';
 
 const mockQuestions = (inputs) => {
   MissionUtils.Console.readLineAsync = jest.fn();
 
   MissionUtils.Console.readLineAsync.mockImplementation(() => {
     const input = inputs.shift();
-
     return Promise.resolve(input);
   });
 };
@@ -19,79 +18,82 @@ const mockRandoms = (numbers) => {
 };
 
 const getLogSpy = () => {
-  const logSpy = jest.spyOn(MissionUtils.Console, "print");
+  const logSpy = jest.spyOn(MissionUtils.Console, 'print');
   logSpy.mockClear();
   return logSpy;
 };
 
-const runException = async (input) => {
+const runException = async (invalidInput, precedingInputs = []) => {
   // given
   const logSpy = getLogSpy();
-
   const RANDOM_NUMBERS_TO_END = [1, 2, 3, 4, 5, 6];
-  const INPUT_NUMBERS_TO_END = ["1000", "1,2,3,4,5,6", "7"];
+  const INPUTS_TO_END = ['1000', '1,2,3,4,5,6', '7'];
 
   mockRandoms([RANDOM_NUMBERS_TO_END]);
-  mockQuestions([input, ...INPUT_NUMBERS_TO_END]);
+  mockQuestions([...precedingInputs, invalidInput, ...INPUTS_TO_END]);
 
   // when
   const app = new App();
   await app.run();
 
   // then
-  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("[ERROR]"));
+  expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('[ERROR]'));
 };
 
-describe("로또 테스트", () => {
+describe('로또 애플리케이션 예외 검사', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
 
-  test("기능 테스트", async () => {
-    // given
-    const logSpy = getLogSpy();
-
-    mockRandoms([
-      [8, 21, 23, 41, 42, 43],
-      [3, 5, 11, 16, 32, 38],
-      [7, 11, 16, 35, 36, 44],
-      [1, 8, 11, 31, 41, 42],
-      [13, 14, 16, 38, 42, 45],
-      [7, 11, 30, 40, 42, 43],
-      [2, 13, 22, 32, 38, 45],
-      [1, 3, 5, 14, 22, 45],
-    ]);
-    mockQuestions(["8000", "1,2,3,4,5,6", "7"]);
-
-    // when
-    const app = new App();
-    await app.run();
-
-    // then
-    const logs = [
-      "8개를 구매했습니다.",
-      "[8, 21, 23, 41, 42, 43]",
-      "[3, 5, 11, 16, 32, 38]",
-      "[7, 11, 16, 35, 36, 44]",
-      "[1, 8, 11, 31, 41, 42]",
-      "[13, 14, 16, 38, 42, 45]",
-      "[7, 11, 30, 40, 42, 43]",
-      "[2, 13, 22, 32, 38, 45]",
-      "[1, 3, 5, 14, 22, 45]",
-      "3개 일치 (5,000원) - 1개",
-      "4개 일치 (50,000원) - 0개",
-      "5개 일치 (1,500,000원) - 0개",
-      "5개 일치, 보너스 볼 일치 (30,000,000원) - 0개",
-      "6개 일치 (2,000,000,000원) - 0개",
-      "총 수익률은 62.5%입니다.",
+  describe('구입 금액 예외 검사', () => {
+    const cases = [
+      ['숫자가 아닌 경우', '1000j'],
+      ['1000원 단위가 아닌 경우', '1500'],
+      ['0원인 경우', '0'],
+      ['음수인 경우', '-1000'],
+      ['공백인 경우', ''],
+      ['소수인 경우', '1000.5'],
     ];
 
-    logs.forEach((log) => {
-      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining(log));
+    test.each(cases)('%s: "%s" 입력 시 [ERROR] 출력', async (title, input) => {
+      await runException(input);
     });
   });
 
-  test("예외 테스트", async () => {
-    await runException("1000j");
+  describe('당첨 번호 예외 검사', () => {
+    const precedingInput = ['1000'];
+    const cases = [
+      ['숫자가 아닌 경우', '1,2,3,4,5,a'],
+      ['숫자 범위를 벗어난 경우 (46)', '1,2,3,4,5,46'],
+      ['숫자 범위를 벗어난 경우 (0)', '1,2,3,4,5,0'],
+      ['중복된 숫자가 있는 경우', '1,2,3,4,5,5'],
+      ['개수가 6개가 아닌 경우 (5개)', '1,2,3,4,5'],
+      ['개수가 6개가 아닌 경우 (7개)', '1,2,3,4,5,6,7'],
+      ['공백이 포함된 경우', '1,2,3,4,5, '],
+      ['쉼표로 시작하는 경우', ',1,2,3,4,5'],
+      ['쉼표로 끝나는 경우', '1,2,3,4,5,'],
+      ['쉼표가 없는 경우', '1 2 3 4 5 6'],
+      ['공백만 입력한 경우', ''],
+    ];
+
+    test.each(cases)('%s: "%s" 입력 시 [ERROR] 출력', async (title, input) => {
+      await runException(input, precedingInput);
+    });
+  });
+
+  describe('보너스 번호 예외 검사', () => {
+    const precedingInputs = ['1000', '1,2,3,4,5,6'];
+    const cases = [
+      ['숫자가 아닌 경우', 'a'],
+      ['숫자 범위를 벗어난 경우 (46)', '46'],
+      ['숫자 범위를 벗어난 경우 (0)', '0'],
+      ['당첨 번호와 중복된 경우', '6'],
+      ['공백인 경우', ''],
+      ['소수인 경우', '7.5'],
+    ];
+
+    test.each(cases)('%s: "%s" 입력 시 [ERROR] 출력', async (title, input) => {
+      await runException(input, precedingInputs);
+    });
   });
 });
