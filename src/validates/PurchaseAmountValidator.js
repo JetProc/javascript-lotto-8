@@ -1,5 +1,5 @@
-import MoneyValidator from './MoneyValidator.js';
 import Validator from './Validator.js';
+import MoneyValidator from './MoneyValidator.js';
 
 export default {
   validatePurchaseAmount(money) {

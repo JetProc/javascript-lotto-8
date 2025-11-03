@@ -15,6 +15,12 @@ export default {
     }
   },
 
+  validateWinningNumberString(input) {
+    Validator.isInputEmpty(input);
+    this.isSeparatorExist(input);
+    this.correctFormat(input);
+  },
+
   validateBonusNumber(mainNumbers, bonusNumber) {
     Validator.isInputEmpty(bonusNumber);
     Validator.isPositiveInteger(bonusNumber);
