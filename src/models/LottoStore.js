@@ -19,7 +19,6 @@ class LottoStore {
         LOTTO_INFO.RANGE_END,
         LOTTO_INFO.TOTAL_LENGTH
       );
-      numbers.sort((a, b) => a - b);
       lottos.push(new Lotto(numbers));
     }
     return lottos;
