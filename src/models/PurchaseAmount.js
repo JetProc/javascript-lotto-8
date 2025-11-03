@@ -1,4 +1,4 @@
-import { Validator, MoneyValidator } from '../validates/Validator.js';
+import PurchaseAmountValidator from '../validates/PurchaseAmountValidator';
 
 class PurchaseAmount {
   #money;
@@ -14,10 +14,7 @@ class PurchaseAmount {
   }
 
   #validate(money) {
-    Validator.isInputEmpty(money);
-    Validator.isPositiveInteger(money);
-    MoneyValidator.isValidUnit(money);
-    MoneyValidator.tooLarge(money);
+    PurchaseAmountValidator.validatePurchaseAmount(money);
   }
 }
 
