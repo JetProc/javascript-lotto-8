@@ -1,12 +1,13 @@
 import InputView from '../views/InputView.js';
-import LottoStore from '../models/LottoStore.js';
-import { INPUT_MESSAGE } from '../constants/messages.js';
 import OutputView from '../views/OuputView.js';
-import PurchaseAmount from '../models/PurchaseAmount.js';
-import WinningLotto from '../models/WinningLotto.js';
+import { INPUT_MESSAGE } from '../constants/messages.js';
+import { LOTTO_NUMBER_SEPARATOR, LOTTO_RANK } from '../constants/config.js';
 import { splitBySeparator } from '../utils/Utils.js';
-import { LOTTO_NUMBER_SEPARATOR } from '../constants/config.js';
+import PurchaseAmount from '../models/PurchaseAmount.js';
 import Lotto from '../models/Lotto.js';
+import LottoStore from '../models/LottoStore.js';
+import LottoResult from '../models/LottoResult.js';
+import WinningLotto from '../models/WinningLotto.js';
 
 class LottoGameController {
   async play() {
@@ -21,18 +22,39 @@ class LottoGameController {
 
       OutputView.printPurchasedLottos(lottoNumberArrays);
 
-      //로또 메인 번호 입력 및 검증
       const winningMainNumbers = await this.#getValidWinningMainNumbers();
 
       const winningBonusNumber = await this.#getValidWinningBonusNumber();
 
       const winningLotto = new WinningLotto(winningMainNumbers.getNumbers(), winningBonusNumber);
 
-      OutputView.printResult(4, 1000, 0);
+      const lottoResult = new LottoResult(lottoNumberArrays, winningLotto);
+
+      const matchCnt = lottoResult.getMatchCntInfo();
+      const profitRate = lottoResult.getProfitRate();
+
+      const resultData = this.#prepareResultData(matchCnt);
+
+      OutputView.printResult(resultData, profitRate);
     } catch (error) {
-      OutputView.printError(error.message);
       throw error;
     }
+  }
+
+  #prepareResultData(matchCnt) {
+    const rankKeys = Object.keys(LOTTO_RANK).reverse();
+
+    return rankKeys.map((rankKey) => {
+      const { matchCount, money, requireBonus } = LOTTO_RANK[rankKey];
+      const count = matchCnt[rankKey];
+
+      return {
+        matchCount,
+        money,
+        requireBonus,
+        count,
+      };
+    });
   }
 
   async #getValidPurchaseAmount() {
