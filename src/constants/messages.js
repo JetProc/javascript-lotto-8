@@ -22,7 +22,7 @@ export const OUTPUT_MESSAGE = Object.freeze({
 export const ERROR_MESSAGE = Object.freeze({
   COMMON: Object.freeze({
     INPUT_EMPTY: `${PREFIX.ERROR} 입력값은 비어있을 수 없습니다.`,
-    INPUT_NOT_AN_POSITIVE_INTEGER: `${PREFIX.ERROR} 값은 정수만 입력되어야 합니다.`,
+    INPUT_NOT_AN_POSITIVE_INTEGER: `${PREFIX.ERROR} 값은 양의 정수(자연수)만 입력되어야 합니다.`,
     LOTTO_NUMBER_OUT_OF_RANGE: `${PREFIX.ERROR} 로또 번호는 ${LOTTO_INFO.RANGE_START}부터 ${LOTTO_INFO.RANGE_END} 사이의 숫자여야 합니다.`,
     LOTTO_NUMBER_DUPLICATED: `${PREFIX.ERROR} 로또 번호는 중복될 수 없습니다.`,
   }),

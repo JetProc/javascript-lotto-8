@@ -1,6 +1,6 @@
 import { Console } from '@woowacourse/mission-utils';
 import { OUTPUT_MESSAGE } from '../constants/messages.js';
-import { LOTTO_NUMBER_SEPARATOR, LOTTO_RANK } from '../constants/config.js';
+import { LOTTO_NUMBER_SEPARATOR } from '../constants/config.js';
 import { formatNumber } from '../utils/Utils.js';
 const OutputView = {
   printPurchasedLottos(lottoNumberArrays) {
@@ -32,6 +32,10 @@ const OutputView = {
 
       Console.print(`${matchMessage} ${prizeMessage} - ${count}개`);
     });
+  },
+
+  printMessage(message) {
+    Console.print(message);
   },
 };
 

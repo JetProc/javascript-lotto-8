@@ -6,7 +6,7 @@ class LottoResult {
 
   constructor(lottos, winningLotto) {
     this.#matchCntInfo = this.#initMatchCntInfo();
-    this.#calculateStats(lottos, winningLotto);
+    this.#calculateResult(lottos, winningLotto);
     this.#profitRate = this.#calculateProfit(lottos.length);
   }
 
@@ -17,7 +17,7 @@ class LottoResult {
     }, {});
   }
 
-  #calculateStats(lottos, winningLotto) {
+  #calculateResult(lottos, winningLotto) {
     lottos.forEach((lotto) => {
       const { matchCount, hasBonus } = winningLotto.compare(lotto);
       const rankKey = this.#getRankKey(matchCount, hasBonus);
@@ -27,18 +27,11 @@ class LottoResult {
   }
 
   #getRankKey(matchCount, hasBonus) {
-    const winLotto = Object.entries(LOTTO_RANK).find(([rankKey, rankInfo]) => {
-      if (rankInfo.matchCount !== matchCount) return false;
-
-      if (rankInfo.requireBonus !== hasBonus && matchCount !== 5) return false;
-
-      if (matchCount === 5) return rankInfo.requireBonus === hasBonus;
-
-      return true;
-    });
-
-    if (winLotto) return winLotto[0];
-
+    if (matchCount === 6) return '1st';
+    if (matchCount === 5 && hasBonus) return '2nd';
+    if (matchCount === 5 && !hasBonus) return '3rd';
+    if (matchCount === 4) return '4th';
+    if (matchCount === 3) return '5th';
     return null;
   }
 
@@ -48,11 +41,11 @@ class LottoResult {
       totalPrize += LOTTO_RANK[rankKey].money * count;
     });
 
-    const totalInvestment = totalLottoCount * LOTTO_COST;
+    const totalCost = totalLottoCount * LOTTO_COST;
 
-    if (totalInvestment === 0) return 0;
+    if (totalCost === 0) return 0;
 
-    const profitRate = (totalPrize / totalInvestment) * 100;
+    const profitRate = (totalPrize / totalCost) * 100;
     return profitRate;
   }
 
